@@ -3,30 +3,49 @@
             [quil.middleware :as m]))
 
 (defn setup []
+  (println "well then")
   (q/frame-rate 10)
   ; Set color mode to HSB (HSV) instead of default RGB.
   (q/color-mode :hsb)
   ; setup function returns initial state. It contains
   ; circle color and position.
   (let [start (list (q/random 500) (q/random 500))
-        end   (list (q/random 500 (q/random 500)))]
+        end   (list (q/random 500) (q/random 500))]
     {:color 0
-     :size 10
-     :cur 0
      :xc (first start)
      :yc (second start)
      :x2 (first end)
      :y2 (second end)}))
 
+(defn abs [n] (max n (- n)))
+
+(defn converged [i j]
+  (< 5 (q/random 10))
+
+(defn target-reached [state]
+  (println "araaargh")
+  (println state)
+  (and (converged (:xc state) (:x2 state))
+       (converged (:yc state) (:y2 state))))
+
 (defn update-state [state]
+  (println state)
   ; Update sketch state by changing circle color and position.
-  {:color 122
-   :size (:size state)
-   :cur (inc (:cur state))
-   :xc (q/lerp (:xc state) (:x2 state) 0.05)
-   :yc (q/lerp (:yc state) (:y2 state) 0.05)
-   :x2 (:x2 state)
-   :y2 (:y2 state)})
+  (if (target-reached state)
+    ; set a new target
+    ((let [start (list (q/random 500) (q/random 500))
+           end   (list (q/random 500) (q/random 500))]
+      {:color 0
+       :xc (first start)
+       :yc (second start)
+       :x2 (first end)
+       :y2 (second end)}))
+    ; move the shape towards the target
+    ({:color 122
+      :xc (q/lerp (:xc state) (:x2 state) 0.05)
+      :yc (q/lerp (:yc state) (:y2 state) 0.05)
+      :x2 (:x2 state)
+      :y2 (:y2 state)})))
 
 (defn draw-state [state]
     (q/ellipse (:xc state) (:yc state) 20 20)
