@@ -21,7 +21,6 @@
 (defn abs [n] (max n (- n)))
 
 (defn converged? [a b]
-  (println "abs is " (abs (- a b)))
   (< (abs (- a b)) 1.0))
 
 (defn update-state [{:keys [x y c x2 y2 c2] :as state}]
@@ -42,24 +41,13 @@
      :y2 y2
      :c2 c2}))
 
-(defn mouse-clicked [state e]
-  (println "huhhhh")
-  {:colour (:colour state)
-    ; :x (q/lerp x x2 0.05)
-    ; :y (q/lerp y y2 0.05)
-    :x (:x state)
-    :y (:x state)
-    :x2 (:x e)
-    :y2 (:y e)}
-  )
-
-(defn draw-state [{:keys [x x2 y y2 c c2] :as state}]
+(defn draw-state [{:keys [x y c x2 y2 c2] :as state}]
+  ; target point
+  (q/ellipse x2 y2 10 10)
   ; moving circle
   (q/ellipse x y 20 20)
-  (q/fill c 255 255)
-  ; target point
-  (q/ellipse x2 y2 5 5)
-  (q/fill c2 100 100))
+  ; (q/fill c2 255 255)
+  (q/fill c 100 100))
 
   ; Set circle color.
   ; (q/fill (:color state) 255 255)
@@ -83,7 +71,6 @@
     ; update-state is called on each iteration before draw-state.
     :update update-state
     :draw draw-state
-    :mouse-clicked mouse-clicked
     ; This sketch uses functional-mode middleware.
     :middleware [m/fun-mode]))
 
