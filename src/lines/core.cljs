@@ -7,8 +7,7 @@
   (q/frame-rate 30)
   ; Set color mode to HSB (HSV) instead of default RGB.
   (q/color-mode :hsb)
-  ; setup function returns initial state. It contains
-  ; circle color and position.
+  ; setup function returns initial state.
   (let [start (list (q/random 500) (q/random 500))
         end   (list (q/random 500) (q/random 500))]
     {:c   (q/random 255)
@@ -25,7 +24,7 @@
 
 (defn update-state [{:keys [x y c x2 y2 c2] :as state}]
   (println "-- update " state)
-  (if (converged? x x2)
+  (if (and (converged? x x2) (converged? y y2))
     ; reached target: set new random values
     {:c c2
      :x x2
@@ -43,7 +42,7 @@
 
 (defn draw-state [{:keys [x y c x2 y2 c2] :as state}]
   ; target point
-  (q/ellipse x2 y2 10 10)
+  ; (q/ellipse x2 y2 10 10)
   ; moving circle
   (q/ellipse x y 20 20)
   ; (q/fill c2 255 255)
@@ -61,6 +60,14 @@
   ;     ; Draw the circle.
   ;     (q/ellipse x y 100 100))))
 
+
+(defn mouse-clicked [state e]
+  (assoc state
+    ; set target coordinates to mouse position
+    :x2 (:x e)
+    :y2 (:y e)
+    :c2 (q/random 255)))
+
 ; this function is called in index.html
 (defn ^:export run-sketch []
   (q/defsketch lines
@@ -71,6 +78,8 @@
     ; update-state is called on each iteration before draw-state.
     :update update-state
     :draw draw-state
+    ; event handlers
+    :mouse-clicked mouse-clicked
     ; This sketch uses functional-mode middleware.
     :middleware [m/fun-mode]))
 
