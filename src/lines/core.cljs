@@ -2,14 +2,17 @@
   (:require [quil.core :as q :include-macros true]
             [quil.middleware :as m]))
 
+(def width 500)
+(def height 500)
+
 (defn setup []
   (println "-- setup")
   (q/frame-rate 30)
   ; Set color mode to HSB (HSV) instead of default RGB.
   (q/color-mode :hsb)
   ; setup function returns initial state.
-  (let [start (list (q/random 500) (q/random 500))
-        end   (list (q/random 500) (q/random 500))]
+  (let [start (list (q/random width) (q/random height))
+        end   (list (q/random height) (q/random width))]
     {:c   (q/random 255)
      :x   (first start)
      :y   (second start)
@@ -30,8 +33,8 @@
      :x x2
      :y y2
      :c2 (q/random 225) 
-     :x2 (q/random 500)
-     :y2 (q/random 500)}
+     :x2 (q/random width)
+     :y2 (q/random height)}
     ; not at target, step towards
     {:c (q/lerp c c2 0.05)
      :x (q/lerp x x2 0.05)
@@ -41,24 +44,16 @@
      :c2 c2}))
 
 (defn draw-state [{:keys [x y c x2 y2 c2] :as state}]
-  ; target point
-  ; (q/ellipse x2 y2 10 10)
-  ; moving circle
-  (q/ellipse x y 20 20)
-  ; (q/fill c2 255 255)
-  (q/fill c 100 100))
+  ; cover everything with a low-opacity rectangle to 'fade' it out
+  ; we need blend mode to fade to 0
+  ; (blend-mode SUBTRACT)
+  (q/fill 0 10 255 5)
+  (q/rect 0 0 width height)
+  ; (blend-mode BLEND)
 
-  ; Set circle color.
-  ; (q/fill (:color state) 255 255)
-  ; Calculate x and y coordinates of the circle.
-  ; (let [angle (:angle state)
-  ;       x (* 150 (q/cos angle))
-  ;       y (* 150 (q/sin angle))]
-  ;   ; Move origin point to the center of the sketch.
-  ;   (q/with-translation [(/ (q/width) 2)
-  ;                        (/ (q/height) 2)]
-  ;     ; Draw the circle.
-  ;     (q/ellipse x y 100 100))))
+  ; draw the new circle on top
+  (q/fill c 100 100)
+  (q/ellipse x y 20 20))
 
 
 (defn mouse-clicked [state e]
@@ -72,7 +67,7 @@
 (defn ^:export run-sketch []
   (q/defsketch lines
     :host "lines"
-    :size [500 500]
+    :size [width height]
     ; setup function called only once, during sketch initialization.
     :setup setup
     ; update-state is called on each iteration before draw-state.
