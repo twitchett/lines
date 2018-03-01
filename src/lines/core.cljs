@@ -2,6 +2,7 @@
   (:require [quil.core :as q :include-macros true]
             [quil.middleware :as m]))
 
+; define canvas size
 (def width 500)
 (def height 500)
 
@@ -26,7 +27,7 @@
   (< (abs (- a b)) 1.0))
 
 (defn update-state [{:keys [x y c x2 y2 c2] :as state}]
-  (println "-- update " state)
+  ; (println "-- update " state)
   (if (and (converged? x x2) (converged? y y2))
     ; reached target: set new random values
     {:c c2
@@ -36,29 +37,25 @@
      :x2 (q/random width)
      :y2 (q/random height)}
     ; not at target, step towards
-    {:c (q/lerp c c2 0.05)
-     :x (q/lerp x x2 0.05)
-     :y (q/lerp y y2 0.05)
-     :x2 x2
-     :y2 y2
-     :c2 c2}))
+    (assoc state
+      :c (q/lerp c c2 0.05)
+      :x (q/lerp x x2 0.05)
+      :y (q/lerp y y2 0.05))))
 
-(defn draw-state [{:keys [x y c x2 y2 c2] :as state}]
+(defn draw-state [{:keys [x y c] :as state}]
   ; cover everything with a low-opacity rectangle to 'fade' it out
   ; we need blend mode to fade to 0
   ; (blend-mode SUBTRACT)
   (q/fill 0 10 255 5)
   (q/rect 0 0 width height)
   ; (blend-mode BLEND)
-
   ; draw the new circle on top
   (q/fill c 100 100)
   (q/ellipse x y 20 20))
 
 
-(defn mouse-clicked [state e]
+(defn set-event-target [state e]
   (assoc state
-    ; set target coordinates to mouse position
     :x2 (:x e)
     :y2 (:y e)
     :c2 (q/random 255)))
@@ -74,7 +71,8 @@
     :update update-state
     :draw draw-state
     ; event handlers
-    :mouse-clicked mouse-clicked
+    :mouse-clicked set-event-target
+    :mouse-dragged set-event-target
     ; This sketch uses functional-mode middleware.
     :middleware [m/fun-mode]))
 
