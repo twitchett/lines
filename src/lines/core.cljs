@@ -1,6 +1,8 @@
 (ns lines.core
   (:require [quil.core :as q :include-macros true]
-            [quil.middleware :as m]))
+            [quil.middleware :as m]
+            [goog.string :as gstring]
+            [goog.string.format]))
 
 ; define canvas size
 (def width 500)
@@ -9,48 +11,105 @@
 
 (defn setup []
   (println "-- setup")
-  (q/frame-rate 300)
+  (q/frame-rate 200)
   ; Set color mode to HSB (HSV) instead of default RGB.
   (q/color-mode :hsb)
   ; setup function returns initial state.
   (let [start (list (q/random width) (q/random height))
-        end   (list (q/random height) (q/random width))]
+        end   (list (q/random height) (q/random width))
+        col   (list (q/random 255) (q/random 255))]
     {:t   0
+     ; start coordinaes
      :x1  (first start)
      :y1  (first start)
-     :c   (q/random 255)
-     :x   (first start)
-     :y   (second start)
-     :c2  (q/random 255)
+     :c1  (first col)
+     ; end coordinates
      :x2  (first end)
      :y2  (second end)
-     :bx1 (q/random width)
-     :by1 (q/random height)
-     :bx2 (q/random width)
-     :by2 (q/random height)}))
-
-(defn update-state [{:keys [x y c x1 y1 x2 y2 c2 bx1 by1 bx2 by2 t] :as state}]
-  (if (> 1.0 t)
-    ; not at target, step towards
-    (assoc state
-      :c (q/lerp c c2 0.1)
-      :x (q/bezier-point x1 bx1 bx2 x2 (+ t t-step))
-      :y (q/bezier-point y1 by1 by2 y2 (+ t t-step))
-      :t (+ t t-step))
-    ; reached target: set new random values
-    {:c c2
-     :x x2
-     :y y2
-     :x1 x2
-     :y1 y2
-     :c2 (q/random 225) 
-     :x2 (q/random width)
-     :y2 (q/random height)
+     ; initial coordinates: same as start
+     :x   (first start)
+     :y   (second start)
+     ; bezier curve anchor points
      :bx1 (q/random width)
      :by1 (q/random height)
      :bx2 (q/random width)
      :by2 (q/random height)
-     :t 0}))
+     ; current (initial) colour
+     :c   (first col)
+     ; end colour
+     :c2  (second col)}))
+
+;; util function: returns the absolute value of n
+(defn abs [n]
+  (max n (- n)))
+
+;; util function: formats a number to 3 dp
+(defn fmt [s]
+  (str (gstring/format "%.3f" s)))
+
+(defn increase-hue [c amt]
+  (println "c + amt: " (fmt c) "+" (fmt amt) "=" (+ c amt))
+  ; (println "could return:" (abs (- (+ c amt) 255)))
+  (let [hue (+ c amt)]
+    (if (< hue 255)
+      hue
+      (abs (- hue 255)))))
+
+(defn new-color [c c1 c2 t]
+  (if (< c1 c2)
+    ; just increase towards c2
+    (let [diff (- c2 c1)
+          frac (* diff t-step)
+          newc (+ c (* frac t))]
+      ; (println "diff c1 -> c2: " (fmt c1) (fmt c2) (fmt diff))
+      ; (println "frac: " (fmt frac))
+      ; (println "new c: " (fmt newc) " @ " (fmt t))
+      ; (println "--------------")
+      newc)
+    ; in this case we have to loop around the hue spectrum
+    (let [diff (- 255 (- c1 c2))  ; we can use max/min here to work out the difference for both branches
+          frac (* diff t-step)
+          newc (increase-hue c frac)]
+      ; (println "diff c1 -> c2: " (fmt c1)  "--> " (fmt c2)  "::" (fmt diff))
+      ; (println "frac: " (fmt frac))
+      ; (println "newc: " (fmt newc))
+      ; (println " !! -------------->>> ")
+      newc)))
+
+(defn update-state [{:keys [x y c c1 x1 y1 x2 y2 c2 bx1 by1 bx2 by2 t] :as state}]
+  (if (> 1.0 t)
+    ; not at target, step towards
+    (let [diff (abs (- c2 c1))
+          frac (* diff t-step)
+          curr (+ c (* frac t))
+          ; newc (+ (* (abs (- c2 c1)) t-step) (* t t-step)
+          ]
+      ; (println "-------- @ t " (fnum t))
+      ; (println "diff " (fnum c2) "-" (fnum c1) "->" (fnum diff))
+      ; (println "frac " (fnum frac))
+      ; (println "c -> c2" (fnum curr) (fnum c2))
+      ; (println "c -> c2" (str (gstring/format "%.9f" c)) (str (gstring/format "%.3f" c2)))
+      ; (println "t" (str (gstring/format "%.3f" t)))
+      (assoc state
+        :c (new-color c c1 c2 t)
+        :x (q/bezier-point x1 bx1 bx2 x2 (+ t t-step))
+        :y (q/bezier-point y1 by1 by2 y2 (+ t t-step))
+        :t (+ t t-step)))
+    ; reached target: set new random values
+    {:t 0
+     :c c2
+     :x x2
+     :y y2
+     :x1 x2
+     :y1 y2
+     :c1 c2
+     :x2 (q/random width)
+     :y2 (q/random height)
+     :c2 (q/random 225) 
+     :bx1 (q/random width)
+     :by1 (q/random height)
+     :bx2 (q/random width)
+     :by2 (q/random height)}))
 
 (defn draw-state [{:keys [x y c x1 y1 x2 y2 bx1 by1 bx2 by2] :as state}]
   ; cover everything with a low-opacity rectangle to 'fade' it out
