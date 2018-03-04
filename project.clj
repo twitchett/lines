@@ -8,7 +8,8 @@
                  [org.clojure/clojurescript "1.9.946"]]
 
   :plugins [[lein-cljsbuild "1.1.7"]
-            [lein-figwheel "0.5.14"]]
+            [lein-figwheel  "0.5.14"]
+            [lein-doo       "0.1.8"]]
   :hooks [leiningen.cljsbuild]
 
   :cljsbuild
@@ -16,17 +17,21 @@
             {:id "development"
              :source-paths ["src"]
              :figwheel true
-             :compiler
-             {:main "lines.core"
-              :output-to "resources/public/js/main.js"
-              :output-dir "resources/public/js/development"
-              :asset-path "js/development"}}
+             :compiler {:main "lines.core"
+                        :output-to "resources/public/js/main.js"
+                        :output-dir "resources/public/js/development"
+                        :asset-path "js/development"}}
             ; minified and bundled build for deployment
             {:id "optimized"
              :source-paths ["src"]
-             :compiler
-             {:main "lines.core"
-              :output-to "resources/public/js/main.js"
-              :output-dir "resources/public/js/optimized"
-              :asset-path "js/optimized"
-              :optimizations :advanced}}]})
+             :compiler {:main "lines.core"
+                        :output-to "resources/public/js/main.js"
+                        :output-dir "resources/public/js/optimized"
+                        :asset-path "js/optimized"
+                        :optimizations :advanced}}
+            ; unit tests
+            {:id "test"
+             :source-paths ["src"]
+             :compiler {:main "lines.testrunner"
+                        :output-to "resources/public/js/test.js"
+                        :optimizations :none}}]})
