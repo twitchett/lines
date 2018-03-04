@@ -4,16 +4,17 @@
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.9.0"]
+                 [org.clojure/clojurescript "1.9.946"]
                  [quil "2.6.0"]
-                 [org.clojure/clojurescript "1.9.946"]]
+                 [doo "0.1.8"]]
 
   :plugins [[lein-cljsbuild "1.1.7"]
             [lein-figwheel  "0.5.14"]
             [lein-doo       "0.1.8"]]
   :hooks [leiningen.cljsbuild]
 
-  :cljsbuild
-  {:builds [; development build with figwheel hot swap
+  :cljsbuild {
+    :builds [; development build with figwheel hot swap
             {:id "development"
              :source-paths ["src"]
              :figwheel true
@@ -34,4 +35,6 @@
              :source-paths ["src"]
              :compiler {:main "lines.testrunner"
                         :output-to "resources/public/js/test.js"
-                        :optimizations :none}}]})
+                        :optimizations :none}}]
+
+    :test-commands {"test" ["lein" "doo" "phantom" "test" "once"]}})
