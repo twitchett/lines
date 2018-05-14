@@ -4,15 +4,16 @@ Experiments with the lovely [Quil](https://github.com/quil/quil).
 
 ## Developing
 
-Run `lein figwheel` in your terminal. Wait for a while until you see `Successfully compiled "resources/public/js/main.js"`. Open [localhost:3449](http://localhost:3449) in your browser.
+Run `lein figwheel` in your terminal. Wait for a while until you see `Successfully compiled "resources/public/js/main.js"`. Open [localhost:3449](http://localhost:3449) in your browser. Behold!
 
 ### Running Tests
 
-Tests are run using [doo](https://github.com/bensu/doo). Requires [PhantomJS](http://phantomjs.org/) to be available on the PATH. To execute, call:
+<!-- Tests are run using [doo](https://github.com/bensu/doo). Requires [PhantomJS](http://phantomjs.org/) to be available on the PATH. To execute, call: -->
 
-```
-lein cljsbuild test
-```
+Tests are run using Karma. `npm install` the dependencies, `lein cljsbuild once karma test` to compile the javascript for karma, `karma start` to run the karma server, and then finally `karma run` to execute the tests. 
+
+
+
 
 ## Publishing
 
