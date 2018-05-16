@@ -1,5 +1,5 @@
 (ns lines.coretest
-  (:require [cljs.test :refer-macros [deftest is testing run-tests]]
+  (:require [cljs.test :refer-macros [deftest is]]
             [lines.core :as l]))
 
 ;; default state
@@ -21,8 +21,15 @@
   :by2 0
 })
 
+(defn square [x] (* x x))
+
+(deftest square-test
+  (is (= 4 (square 2))))
+
 (deftest rtest
-  (is (< 100 (l/rtest))))
+  (is (< (l/rtest) 100)))
+
+
 
 ;; TODO more tests
 ; (deftest new-state

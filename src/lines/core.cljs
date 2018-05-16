@@ -1,8 +1,10 @@
 (ns lines.core
-  (:require [quil.core :as q :refer-macros [random defsketch]]
+  (:require [quil.core :as q :refer-macros [defsketch]]
             [quil.middleware :as m]
             [goog.string :as gstring]
             [goog.string.format]))
+
+(enable-console-print!)
 
 ; configure global properties
 (def width 500)
@@ -17,7 +19,6 @@
 (defn fmt [s]
   (str (gstring/format "%.3f" s)))
 
-
 ;; distance between points c1 and c2 on the hue spectrum (0..255)
 (defn c-distance [c1 c2]
   (if (< c1 c2)
@@ -26,16 +27,17 @@
 
 (defn rtest []
   ; (q/frame-rate 100)
-  (q/random 100))
+  (println (rand-int 100))
+  (rand-int 100))
 
 ; Creates a new state with random values.
 ; Values can be overriden by passing a map.
 ; TODO use partial function or make the argument optional
 (defn new-state [s]
-  (let [x-start (or (:x-start s) (q/random width))
-        y-start (or (:y-start s) (q/random width))
-        c-start (or (:c-start s) (q/random 225))
-        c-end   (or (:c-end s) (q/random 225))
+  (let [x-start (or (:x-start s) (rand-int width))
+        y-start (or (:y-start s) (rand-int width))
+        c-start (or (:c-start s) (rand-int 225))
+        c-end   (or (:c-end s) (rand-int 225))
         c-dist  (c-distance c-start c-end)
         c-step  (* c-dist t-step)]
     {:t   (or (:t s) 0)
@@ -44,16 +46,16 @@
      :x1  x-start
      :y1  y-start
      ; end coordinates
-     :x2  (or (:x2 s) (q/random width))
-     :y2  (or (:y2 s) (q/random height))
+     :x2  (or (:x2 s) (rand-int width))
+     :y2  (or (:y2 s) (rand-int height))
      ; initial coordinates: same as start
      :x   x-start
      :y   y-start
      ; bezier curve anchor points
-     :bx1 (or (:bx1 s) (q/random width))
-     :by1 (or (:by1 s) (q/random height))
-     :bx2 (or (:bx2 s) (q/random width))
-     :by2 (or (:by2 s) (q/random height))
+     :bx1 (or (:bx1 s) (rand-int width))
+     :by1 (or (:by1 s) (rand-int height))
+     :bx2 (or (:bx2 s) (rand-int width))
+     :by2 (or (:by2 s) (rand-int height))
      ; colour (hue)
      :c   c-start
      :c1  c-start
@@ -64,7 +66,6 @@
 
 ;; Creates the initial state passed to draw-state
 (defn setup []
-  (println "-- setup")
   (q/frame-rate frame-rate)
   ; Set color mode to HSB (HSV) instead of default RGB.
   (q/color-mode :hsb)
@@ -115,7 +116,7 @@
 ;   (assoc state
 ;     :x2 (:x e)
 ;     :y2 (:y e)
-;     :c2 (q/random 255)))
+;     :c2 (rand-int 255)))
 
 
 ; this function is called in index.html

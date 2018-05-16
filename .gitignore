@@ -3,7 +3,7 @@
 /checkouts
 /node_modules
 /resources/test
-/resources/public/js
+/resources/public/js/*
 pom.xml
 pom.xml.asc
 *.jar
