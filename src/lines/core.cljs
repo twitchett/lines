@@ -7,10 +7,10 @@
 (enable-console-print!)
 
 ; configure global properties
-(def width 500)
-(def height 500)
-(def frame-rate 300)
-(def t-step 0.005)    ; 0.005 => 200 steps 
+(def width      500)    ; canvas width
+(def height     500)    ; canvas height
+(def frame-rate 300)    ;
+(def t-step     0.005)  ; 0.005 => 200 steps 
 
 ;; util function: returns the absolute value of n
 (defn abs [n] (max n (- n)))
@@ -21,14 +21,9 @@
 
 ;; distance between points c1 and c2 on the hue spectrum (0..255)
 (defn c-distance [c1 c2]
-  (if (< c1 c2)
+  (if (<= c1 c2)
     (- c2 c1)
     (- 255 (- c1 c2))))
-
-(defn rtest []
-  ; (q/frame-rate 100)
-  (println (rand-int 100))
-  (rand-int 100))
 
 ; Creates a new state with random values.
 ; Values can be overriden by passing a map.
@@ -66,12 +61,14 @@
 
 ;; Creates the initial state passed to draw-state
 (defn setup []
+  ; Configuration
   (q/frame-rate frame-rate)
-  ; Set color mode to HSB (HSV) instead of default RGB.
   (q/color-mode :hsb)
+  ; Return new initial state
   (new-state {}))
 
 
+;; Increases `c` by `step`, wrapping around the max-hue value 255
 (defn increase-hue [c step]
   ; (println "could return:" (abs (- (+ c amt) 255)))
   (let [hue (+ c step)]
@@ -119,9 +116,10 @@
 ;     :c2 (rand-int 255)))
 
 
-; this function is called in index.html
+; called in index.html
 (defn ^:export run-sketch []
   (q/defsketch lines
+    ; matches against the id of an HTML element on the page
     :host "lines"
     :size [width height]
     ; setup function called only once, during sketch initialization.
@@ -132,7 +130,8 @@
     ; event handlers
     ; :mouse-clicked set-event-target
     ; :mouse-dragged set-event-target
-    ; This sketch uses functional-mode middleware.
+    ; enables functional mode:
+    ; https://github.com/quil/quil/wiki/Functional-mode-%28fun-mode%29
     :middleware [m/fun-mode]))
 
 ; uncomment this line to reset the sketch:
