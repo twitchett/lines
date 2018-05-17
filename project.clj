@@ -4,9 +4,10 @@
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
 
-    :dependencies [[org.clojure/clojure "1.9.0"]
+  :dependencies [[org.clojure/clojure "1.9.0"]
                  [org.clojure/clojurescript "1.9.946"]
                  [quil "2.6.0"]
+                 [stubadub "2.0.0"]
                  [karma-reporter "2.1.1"]]
 
   :plugins [[lein-cljsbuild "1.1.7"]
@@ -40,7 +41,7 @@
                :compiler {:main "lines.karmarunner"
                           :output-to "resources/test/test.js"
                           :output-dir "resources/test/test"
-                          ;; karma serves files from a virtual root "base"
+                          ;; karma serves filesfrom a virtual root "base"
                           :asset-path "base/resources/test/test"
                           :optimizations :none
                           :pretty-print false}}
