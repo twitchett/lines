@@ -9,8 +9,8 @@
 ; configure global properties
 (def width      500)    ; canvas width
 (def height     500)    ; canvas height
-(def frame-rate 300)    ;
-(def t-step     0.005)  ; 0.005 => 200 steps 
+(def frame-rate 300)    ; self-explanatory
+(def t-step     0.005)  ; amount to increase t by at each iteration (to max of 1)
 
 ;; util function: returns the absolute value of n
 (defn abs [n] (max n (- n)))

@@ -8,7 +8,7 @@ Run `lein figwheel` in your terminal. Wait for a while until you see `Successful
 
 ## Tests
 
-Yes. They are run using Karma, in either Chrome or PhantomJS.
+Yes. They are run using Karma, in either Chrome or PhantomJS. 
 
 ### Prerequisites
 
@@ -17,16 +17,10 @@ Yes. They are run using Karma, in either Chrome or PhantomJS.
 
 ### To run once
 
-Compile:
+Compile the code and trigger a Karma run with:
 
 ```
-lein cljsbuild once test
-```
-
-Run the tests:
-
-```
-./run-karma.sh
+lein test
 ```
 
 ### To run automatically
@@ -43,9 +37,3 @@ The tests will re-run upon file changes.
 ## Publishing
 
 Before you publish your sketch, run `lein cljsbuild once optimized`. This will compile your code and run Google Closure Compiler with advanced optimizations. Take `resources/public/index.html` and `resources/public/js/main.js` and upload them to server of your choice.
-
-## License
-
-Copyright © 2018 Tabitha Goodall
-
-Distributed under the Eclipse Public License version 1.0.

@@ -41,11 +41,10 @@
                :compiler {:main "lines.karmarunner"
                           :output-to "resources/test/test.js"
                           :output-dir "resources/test/test"
-                          ;; karma serves filesfrom a virtual root "base"
+                          ;; karma serves files from a virtual root "base"
                           :asset-path "base/resources/test/test"
                           :optimizations :none
                           :pretty-print false}}
             ]
 
-    ; :test-commands {"test" ["lein" "doo" "nashorn" "test" "once"]}
-    })
+    :test-commands {"karma" ["./run-karma.sh"]}})
